@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, LoginPayload, RegisterPayload, UserRole } from '../models/user.model';
 import { StorageService } from './storage.service';
@@ -7,33 +7,30 @@ import { StorageService } from './storage.service';
   providedIn: 'root'
 })
 export class AuthService {
-  // Usamos un 'signal' para que todo el sistema sepa en tiempo real si hay alguien logueado
-  currentUser = signal<User | null>(null);
+  private currentUser: User | null = null;
 
- constructor(
-  private storage: StorageService,
-  private router: Router
-) {
-  // --- AGREGÁ ESTO ---
-  // Si no hay usuarios en el sistema, creamos uno para poder probar
-  const existingUsers = this.storage.getItem('users');
-  if (!existingUsers || existingUsers.length === 0) {
-    const adminUser = {
-      dni: '123',
-      password: '123',
-      nombre: 'Ezequiel',
-      role: 'admin',
-      estado: 'approved'
-    };
-    this.storage.setItem('users', [adminUser]);
-  }
-  // -------------------
+  constructor(
+    private storage: StorageService,
+    private router: Router
+  ) {
+    // Si no hay usuarios en el sistema, creamos uno para poder probar
+    const existingUsers = this.storage.getItem('users');
+    if (!existingUsers || existingUsers.length === 0) {
+      const adminUser = {
+        dni: '123',
+        password: '123',
+        nombre: 'Ezequiel',
+        role: 'admin',
+        estado: 'approved'
+      };
+      this.storage.setItem('users', [adminUser]);
+    }
 
-  const savedUser = this.storage.getItem('current_user');
-  if (savedUser) {
-    this.currentUser.set(savedUser);
+    const savedUser = this.storage.getItem('current_user');
+    if (savedUser) {
+      this.currentUser = savedUser;
+    }
   }
-}
 
   // --- LÓGICA DE INGRESO ---
   login(payload: LoginPayload): boolean {
@@ -43,7 +40,7 @@ export class AuthService {
     const user = users.find(u => u.dni === payload.dni && u.password === payload.password);
 
     if (user) {
-      this.currentUser.set(user);
+      this.currentUser = user;
       this.storage.setItem('current_user', user);
       return true;
     }
@@ -75,16 +72,23 @@ export class AuthService {
 
   // --- UTILIDADES ---
   logout() {
-    this.currentUser.set(null);
+    this.currentUser = null;
     this.storage.removeItem('current_user');
     this.router.navigate(['/login']);
   }
 
+  // CORREGIDO: sin paréntesis en currentUser
   isAdmin(): boolean {
-    return this.currentUser()?.role === 'admin';
+    return this.currentUser?.role === 'admin';
   }
 
+  // CORREGIDO: sin paréntesis en currentUser
   isLoggedIn(): boolean {
-    return this.currentUser() !== null;
+    return this.currentUser !== null;
+  }
+
+  // Agregamos esta utilidad por si algún componente necesita leer los datos del usuario logueado
+  getCurrentUser(): User | null {
+    return this.currentUser;
   }
 }
