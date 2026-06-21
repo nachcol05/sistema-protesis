@@ -1,0 +1,97 @@
+<div class="dashboard-container">
+  
+  <header class="main-navbar">
+    <div class="user-info">
+      <h2>Sistema de Prótesis</h2>
+      <span class="user-welcome">Hola, Ezequiel</span>
+      <span class="user-badge">
+        DNI: <strong>{{ dniUsuario | dniFormato }}</strong>
+      </span>
+    </div>
+    <button (click)="authService.logout()" class="btn btn-logout">Cerrar Sesión</button>
+  </header>
+
+  <div class="actions-bar">
+    <div class="search-box" style="display: flex; align-items: center; gap: 15px;">
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre...">
+      
+      <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none;">
+        <input type="checkbox" [(ngModel)]="soloStockBajo"> ⚠️ Ver Stock Bajo (≤ 5 u.)
+      </label>
+    </div>
+
+    <button class="btn btn-success" (click)="mostrarFormulario = true">
+      + Agregar Nueva Prótesis
+    </button>
+  </div>
+
+  @if (!mostrarFormulario) {
+    
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Stock</th>
+          <th>Vencimiento</th>
+          <th>Obra Social</th>
+          <th>Acciones de Gestión</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of filteredProtesis; track item.id) {
+          <tr>
+            <td>{{ item.nombreProducto }}</td>
+            <td>{{ item.cantidad }} u.</td>
+            <td [class.text-danger]="item.cantidad <= 5">{{ item.vencimiento }}</td>
+            <td>{{ item.obraSocial }}</td>
+            <td>
+              <button (click)="prepararEdicion(item)" class="btn btn-primary">Editar</button>
+              <button (click)="borrarItem(item.id)" class="btn btn-danger">Borrar</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" style="text-align: center; color: gray;">
+              No se encontraron prótesis con los filtros aplicados.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+  } @else {
+    
+    <div class="form-container">
+      <h3>{{ idEnEdicion ? 'Editar Prótesis' : 'Cargar Nueva Prótesis' }}</h3>
+      
+      <form [formGroup]="stockForm" (ngSubmit)="guardarCambios()">
+        <div class="form-group">
+          <label>Nombre del Producto:</label>
+          <input type="text" formControlName="nombreProducto" placeholder="Ej: Prótesis de rodilla">
+        </div>
+
+        <div class="form-group">
+          <label>Cantidad en Stock:</label>
+          <input type="number" formControlName="cantidad" placeholder="Ej: 10">
+        </div>
+
+        <div class="form-group">
+          <label>Fecha de Vencimiento:</label>
+          <input type="date" formControlName="fechaVencimiento">
+        </div>
+
+        <div class="form-group">
+          <label>Obra Social Destinada:</label>
+          <input type="text" formControlName="obraSocial" placeholder="Ej: PAMI, IOMA, OSDE">
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success" [disabled]="stockForm.invalid">Guardar</button>
+          <button type="button" class="btn btn-secondary" (click)="cerrarFormulario()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+  }
+
+</div>
