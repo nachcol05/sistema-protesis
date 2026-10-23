@@ -1,0 +1,113 @@
+.users-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  margin: 0;
+  color: #183d35;
+  font-size: 1.6rem;
+}
+
+header p {
+  margin: 0;
+  color: #53645d;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid #d7e1dd;
+  border-radius: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #d7e1dd;
+}
+
+th {
+  background: #f2f6f5;
+  color: #283b36;
+  font-size: 0.875rem;
+}
+
+td span {
+  display: block;
+  margin-top: 4px;
+  color: #53645d;
+  overflow-wrap: anywhere;
+}
+
+select,
+input {
+  box-sizing: border-box;
+  min-height: 38px;
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #9aaea6;
+  border-radius: 4px;
+  background: white;
+  font: inherit;
+}
+
+td input {
+  display: block;
+  width: 100%;
+  margin: 3px 0;
+}
+
+button {
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 4px;
+  background: #176b57;
+  color: white;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled,
+input:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.empty-state {
+  padding: 28px;
+  color: #53645d;
+  text-align: center;
+}
+
+.form-error {
+  color: #a32626;
+}
+
+.form-success {
+  color: #176b57;
+}
+
+@media (max-width: 650px) {
+  header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

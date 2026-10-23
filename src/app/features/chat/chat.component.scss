@@ -1,0 +1,138 @@
+.chat-page {
+  min-height: 100vh;
+  padding: 32px 20px;
+  background: #f2f6f5;
+}
+
+.chat-panel {
+  display: grid;
+  grid-template-rows: auto minmax(240px, 1fr) auto;
+  width: min(100%, 760px);
+  min-height: min(80vh, 760px);
+  margin: 0 auto;
+  border: 1px solid #d7e1dd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.chat-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #d7e1dd;
+}
+
+h1 {
+  margin: 0;
+  color: #183d35;
+  font-size: 1.4rem;
+}
+
+.chat-header span,
+.message-meta time {
+  color: #53645d;
+  font-size: 0.875rem;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 20px 24px;
+  list-style: none;
+}
+
+.message {
+  padding: 12px 14px;
+  border-left: 3px solid #438875;
+  background: #f4f8f6;
+}
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  overflow-wrap: anywhere;
+}
+
+.message-meta strong {
+  color: #183d35;
+}
+
+.message p {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.empty-state {
+  margin: auto;
+  color: #53645d;
+  text-align: center;
+}
+
+.composer {
+  display: grid;
+  gap: 10px;
+  padding: 20px 24px;
+  border-top: 1px solid #d7e1dd;
+}
+
+.composer label {
+  color: #283b36;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #9aaea6;
+  border-radius: 4px;
+  font: inherit;
+}
+
+button {
+  justify-self: end;
+  min-width: 100px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 4px;
+  background: #176b57;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.form-error {
+  margin: 0;
+  color: #a32626;
+}
+
+@media (max-width: 520px) {
+  .chat-page {
+    padding: 12px;
+  }
+
+  .chat-panel {
+    min-height: calc(100vh - 24px);
+  }
+
+  .chat-header,
+  .messages,
+  .composer {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}

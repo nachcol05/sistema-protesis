@@ -1,0 +1,47 @@
+<main class="chat-page">
+  <section class="chat-panel" aria-label="Foro de mensajes">
+    <header class="chat-header">
+      <h1>Foro</h1>
+      <span>Mensajes en tiempo real</span>
+    </header>
+
+    <ol class="messages" aria-live="polite" aria-relevant="additions">
+      @if (errorLectura()) {
+        <li class="form-error" role="alert">{{ errorLectura() }}</li>
+      }
+      @for (mensaje of mensajes(); track mensaje.id) {
+        <li class="message">
+          <div class="message-meta">
+            <strong>{{ mensaje.usuarioEmail }}</strong>
+            @if (mensaje.fecha) {
+              <time>{{ mensaje.fecha.toDate() | date:'short' }}</time>
+            }
+          </div>
+          <p>{{ mensaje.texto }}</p>
+        </li>
+      } @empty {
+        <li class="empty-state">Todavía no hay mensajes.</li>
+      }
+    </ol>
+
+    <form class="composer" (ngSubmit)="enviar()">
+      <label for="message-text">Escribe un mensaje</label>
+      <textarea
+        id="message-text"
+        name="texto"
+        rows="3"
+        maxlength="1000"
+        [ngModel]="texto()"
+        (ngModelChange)="texto.set($event)"
+        [disabled]="enviando()"
+        required
+      ></textarea>
+      @if (error()) {
+        <p class="form-error" role="alert">{{ error() }}</p>
+      }
+      <button type="submit" [disabled]="enviando() || !texto().trim() || !usuario()?.email">
+        {{ enviando() ? 'Enviando...' : 'Enviar' }}
+      </button>
+    </form>
+  </section>
+</main>

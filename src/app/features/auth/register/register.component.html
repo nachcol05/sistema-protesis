@@ -1,1 +1,21 @@
-<p>register works!</p>
+<main class="register-page">
+	<form class="register-form" [formGroup]="form" (ngSubmit)="registrar()">
+		<h1>Crear cuenta</h1>
+
+		<label>Nombre<input formControlName="nombre" autocomplete="given-name" required /></label>
+		<label>Apellido<input formControlName="apellido" autocomplete="family-name" required /></label>
+		<label>Teléfono<input formControlName="telefono" type="tel" autocomplete="tel" required /></label>
+		<label>DNI<input formControlName="dni" inputmode="numeric" required /></label>
+		<label>Correo electrónico<input formControlName="email" type="email" autocomplete="email" required /></label>
+		<label>Contraseña<input formControlName="password" type="password" autocomplete="new-password" minlength="6" required /></label>
+
+		@if (error()) {
+			<p class="form-error" role="alert">{{ error() }}</p>
+		}
+
+		<button type="submit" [disabled]="loading()">
+			{{ loading() ? 'Creando cuenta...' : 'Registrarme' }}
+		</button>
+		<a routerLink="/login">Ya tengo una cuenta</a>
+	</form>
+</main>

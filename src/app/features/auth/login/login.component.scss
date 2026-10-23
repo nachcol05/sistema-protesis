@@ -1,18 +1,16 @@
-// Contenedor principal centrado en pantalla completa
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background-color: #f1f5f9; // Gris claro de fondo
+  background-color: #f1f5f9;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 20px;
   box-sizing: border-box;
 }
 
-// Tarjeta del Login
 .login-card {
   background: #ffffff;
   padding: 40px;
@@ -23,7 +21,6 @@
   box-sizing: border-box;
 }
 
-// Encabezado (Título y logo)
 .login-header {
   text-align: center;
   margin-bottom: 32px;
@@ -33,9 +30,9 @@
     margin-bottom: 12px;
   }
 
-  h1 {
-    font-size: 26px;
-    color: #1e293b; // Color oscuro idéntico a tu navbar principal
+  h2 {
+    font-size: 24px;
+    color: #1e293b;
     margin: 0 0 8px 0;
     font-weight: 700;
   }
@@ -47,7 +44,17 @@
   }
 }
 
-// Formulario y grupos de campos
+.alert-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -66,7 +73,6 @@
   }
 }
 
-// Inputs con íconos integrados
 .input-wrapper {
   position: relative;
   display: flex;
@@ -82,7 +88,7 @@
 
   input {
     width: 100%;
-    padding: 12px 14px 12px 42px; // Espacio extra a la izquierda para el ícono
+    padding: 12px 14px 12px 42px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     font-size: 15px;
@@ -93,14 +99,13 @@
 
     &:focus {
       outline: none;
-      border-color: #0ea5e9; // Azul moderno al enfocar
+      border-color: #0ea5e9;
       background-color: #ffffff;
       box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
     }
   }
 }
 
-// Mensajes de validación de error
 .error-text {
   font-size: 12px;
   color: #ef4444;
@@ -108,11 +113,10 @@
   margin-top: 2px;
 }
 
-// Botón de Inicio de Sesión
 .btn-login {
   width: 100%;
   padding: 14px;
-  background-color: #10b981; // Verde esmeralda que combina con el "+ Agregar Prótesis"
+  background-color: #10b981;
   color: white;
   border: none;
   border-radius: 8px;
@@ -138,5 +142,31 @@
     color: #94a3b8;
     cursor: not-allowed;
     box-shadow: none;
+  }
+}
+
+.toggle-mode {
+  margin-top: 24px;
+  text-align: center;
+
+  p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .btn-toggle {
+    background: none;
+    border: none;
+    color: #0ea5e9;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    text-decoration: underline;
+
+    &:hover {
+      color: #0284c7;
+    }
   }
 }

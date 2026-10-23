@@ -1,0 +1,94 @@
+<main class="users-page">
+  <header>
+    <h1>Administrar usuarios</h1>
+    <p>Usuarios registrados: {{ usuarios().length }}</p>
+  </header>
+
+  @if (error()) {
+    <p class="form-error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Usuario</th>
+          <th scope="col">DNI</th>
+          <th scope="col">Teléfono</th>
+          <th scope="col">Rol</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (usuario of usuarios(); track usuario.id) {
+          <tr>
+            <td>
+              <input
+                type="text"
+                [value]="draftFor(usuario).nombre"
+                [disabled]="guardandoId() === usuario.id"
+                [attr.aria-label]="'Nombre de ' + usuario.email"
+                placeholder="Nombre"
+                (input)="actualizarCampo(usuario, 'nombre', $event)"
+              />
+              <input
+                type="text"
+                [value]="draftFor(usuario).apellido"
+                [disabled]="guardandoId() === usuario.id"
+                [attr.aria-label]="'Apellido de ' + usuario.email"
+                placeholder="Apellido"
+                (input)="actualizarCampo(usuario, 'apellido', $event)"
+              />
+              <span>{{ usuario.email }}</span>
+            </td>
+            <td>
+              <input
+                type="text"
+                [value]="draftFor(usuario).dni"
+                [disabled]="guardandoId() === usuario.id"
+                [attr.aria-label]="'DNI de ' + usuario.email"
+                placeholder="DNI"
+                (input)="actualizarCampo(usuario, 'dni', $event)"
+              />
+            </td>
+            <td>
+              <input
+                type="tel"
+                [value]="draftFor(usuario).telefono"
+                [disabled]="guardandoId() === usuario.id"
+                [attr.aria-label]="'Teléfono de ' + usuario.email"
+                placeholder="Teléfono"
+                (input)="actualizarCampo(usuario, 'telefono', $event)"
+              />
+            </td>
+            <td>
+              <select
+                [value]="usuario.rol"
+                [disabled]="guardandoId() === usuario.id"
+                [attr.aria-label]="'Rol de ' + usuario.email"
+                (change)="cambiarRol(usuario, $event)"
+              >
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </td>
+            <td>
+              <button type="button" [disabled]="guardandoId() === usuario.id" (click)="guardarPerfil(usuario)">
+                {{ guardandoId() === usuario.id ? 'Guardando...' : 'Guardar' }}
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty-state">
+              No hay perfiles en Firestore. Las cuentas creadas antes de habilitar perfiles deben agregarse a la colección usuarios usando su UID de Firebase Authentication como ID del documento.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (guardado()) {
+    <p class="form-success" role="status">{{ guardado() }}</p>
+  }
+</main>

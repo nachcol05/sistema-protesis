@@ -2,24 +2,33 @@
   <div class="login-card">
     <div class="login-header">
       <div class="logo-icon">🩻</div>
-      <h2>Sistema de Prótesis - Ingreso</h2>
-      <p>Ingresá tus credenciales para acceder al inventario</p>
+      <h2>{{ isRegisterMode ? 'Crear Cuenta' : 'Sistema de Prótesis - Ingreso' }}</h2>
+      <p>{{ isRegisterMode ? 'Ingresá tus datos para registrarte' : 'Ingresá tus credenciales para acceder al inventario' }}</p>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+    @if (errorMessage) {
+      <div class="alert-error">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
-        <label>Número de DNI</label>
+        <label>Correo electrónico</label>
         <div class="input-wrapper">
-          <span class="input-icon">🪪</span>
+          <span class="input-icon">✉️</span>
           <input 
-            type="text" 
-            formControlName="dni" 
-            placeholder="DNI"
+            type="email" 
+            formControlName="email" 
+            placeholder="Correo electrónico"
             autocomplete="username"
           >
         </div>
-        @if (loginForm.get('dni')?.touched && loginForm.get('dni')?.errors?.['required']) {
-          <span class="error-text">El DNI es obligatorio</span>
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']) {
+          <span class="error-text">El correo electrónico es obligatorio</span>
+        }
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']) {
+          <span class="error-text">El correo electrónico no es válido</span>
         }
       </div>
 
@@ -37,15 +46,57 @@
         @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']) {
           <span class="error-text">La contraseña es obligatoria</span>
         }
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']) {
+          <span class="error-text">La contraseña debe tener al menos 6 caracteres</span>
+        }
       </div>
+
+      @if (isRegisterMode) {
+        <div class="form-group">
+          <label for="register-nombre">Nombre</label>
+          <div class="input-wrapper">
+            <input id="register-nombre" type="text" formControlName="nombre" placeholder="Nombre" autocomplete="given-name" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-apellido">Apellido</label>
+          <div class="input-wrapper">
+            <input id="register-apellido" type="text" formControlName="apellido" placeholder="Apellido" autocomplete="family-name" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-dni">DNI</label>
+          <div class="input-wrapper">
+            <input id="register-dni" type="text" formControlName="dni" placeholder="DNI" inputmode="numeric" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="register-telefono">Teléfono</label>
+          <div class="input-wrapper">
+            <input id="register-telefono" type="tel" formControlName="telefono" placeholder="Teléfono" autocomplete="tel" required>
+          </div>
+        </div>
+      }
 
       <button 
         type="submit" 
         [disabled]="loginForm.invalid" 
         class="btn-login"
       >
-        Entrar →
+        {{ isRegisterMode ? 'Registrarse →' : 'Entrar →' }}
       </button>
     </form>
+
+    <div class="toggle-mode">
+      <p>
+        {{ isRegisterMode ? '¿Ya tenés una cuenta?' : '¿No tenés una cuenta?' }}
+        <button type="button" (click)="toggleMode()" class="btn-toggle">
+          {{ isRegisterMode ? 'Iniciá sesión' : 'Registrate acá' }}
+        </button>
+      </p>
+    </div>
   </div>
 </div>

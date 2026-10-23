@@ -1,18 +1,17 @@
-// src/app/core/models/user.model.ts
-
 export type UserRole = 'admin' | 'user';
 export type UserStatus = 'pending' | 'approved' | 'rejected';
 export type ProviderType = 'normal' | 'obra social';
 
-// 1. Interfaz de Usuario (Registro y Login)
+// 1. Interfaz de Usuario
 export interface User {
   id: string;
   nombre: string;
   apellido: string;
   telefono: string;
   dni: string;
-  password?: string; // Opcional para cuando consultamos listas
-  role: UserRole;
+  email: string;
+  password?: string;
+  rol: UserRole;
   estado: UserStatus;
   createdAt: Date | string;
 }
@@ -29,7 +28,8 @@ export interface StockItem {
   doctor: string;
   tipoCaja: string;
   obraSocial: string;
-  proveedorId: string; // Relación con el proveedor
+  ordenMedicaUrl?: string;
+  proveedorId: string;
   certificado?: string;
 }
 
@@ -40,24 +40,25 @@ export interface Provider {
   contacto: string;
   email: string;
   tipo: ProviderType;
-  protesisQueProvee: string[]; // IDs de categorías o nombres
+  protesisQueProvee: string[];
 }
 
-// 4. Registro de Movimientos (Lo que ve el Admin)
+// 4. Registro de Movimientos
 export interface StockMovement {
   id: string;
   fecha: Date | string;
-  usuarioId: string; // Quién lo hizo
-  usuarioNombre: string; // Para mostrarlo fácil en la tabla
+  usuarioId: string;
+  usuarioNombre: string;
   tipoMovimiento: 'ingreso' | 'egreso';
   productoId: string;
   cantidad: number;
-  motivo?: string; // Ej: "Venta", "Devolución", "Ajuste"
+  motivo?: string;
 }
 
-// Payloads para formularios (evita errores en el tipado de inputs)
-export interface RegisterPayload extends Omit<User, 'id' | 'role' | 'estado' | 'createdAt'> {}
+// Payloads para formularios
+export interface RegisterPayload extends Omit<User, 'id' | 'rol' | 'estado' | 'createdAt'> {}
+
 export interface LoginPayload {
-  dni: string;
+  email: string;
   password: string;
 }

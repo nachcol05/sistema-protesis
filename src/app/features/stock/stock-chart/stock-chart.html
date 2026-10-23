@@ -1,0 +1,15 @@
+<div class="chart-box" style="max-width: 500px; margin: 30px auto; text-align: center;">
+  <h3>Distribución de Prótesis y Stock</h3>
+  
+  <div style="position: relative; height: 320px; width: 100%; margin: 0 auto;">
+    <canvas baseChart
+      [data]="pieChartData"
+      [type]="pieChartType"
+      [options]="pieChartOptions">
+    </canvas>
+  </div>
+
+  <button class="btn btn-success" (click)="exportarExcel()" style="margin-top: 20px; padding: 10px 15px; cursor: pointer;">
+    📊 Exportar Reporte a Excel
+  </button>
+</div>

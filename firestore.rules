@@ -1,0 +1,65 @@
+rules_version='2'
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+
+    function validUserProfile(data) {
+      return data.email is string
+        && data.rol in ['admin', 'user']
+        && (!('nombre' in data) || (data.nombre is string && data.nombre.size() <= 100))
+        && (!('apellido' in data) || (data.apellido is string && data.apellido.size() <= 100))
+        && (!('dni' in data) || (data.dni is string && data.dni.size() <= 20))
+        && (!('telefono' in data) || (data.telefono is string && data.telefono.size() <= 30));
+    }
+
+    match /usuarios/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && validUserProfile(request.resource.data)
+        && request.resource.data.keys().hasAll(['nombre', 'apellido', 'telefono', 'dni', 'email', 'rol', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['nombre', 'apellido', 'telefono', 'dni', 'email', 'rol', 'createdAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.rol == 'user'
+        && request.resource.data.createdAt == request.time;
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'rol', 'nombre', 'apellido', 'dni', 'telefono'
+        ])
+        && request.resource.data.keys().hasAll(['email', 'rol'])
+        && validUserProfile(request.resource.data)
+        && request.resource.data.rol in ['admin', 'user'];
+      allow delete: if isAdmin() && request.auth.uid != uid;
+    }
+
+    match /mensajes/{mensajeId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasAll(['texto', 'usuarioEmail', 'fecha'])
+        && request.resource.data.keys().hasOnly(['texto', 'usuarioEmail', 'fecha'])
+        && request.resource.data.texto is string
+        && request.resource.data.texto.size() > 0
+        && request.resource.data.texto.size() <= 1000
+        && request.resource.data.usuarioEmail == request.auth.token.email
+        && request.resource.data.fecha == request.time;
+      allow update, delete: if false;
+    }
+
+    match /protesis/{protesisId} {
+      allow read, write: if signedIn();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

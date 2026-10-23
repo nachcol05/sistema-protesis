@@ -1,97 +1,139 @@
-<div class="dashboard-container">
-  
-  <header class="main-navbar">
-    <div class="user-info">
-      <h2>Sistema de Prótesis</h2>
-      <span class="user-welcome">Hola, Ezequiel</span>
-      <span class="user-badge">
-        DNI: <strong>{{ dniUsuario | dniFormato }}</strong>
-      </span>
-    </div>
-    <button (click)="authService.logout()" class="btn btn-logout">Cerrar Sesión</button>
-  </header>
-
-  <div class="actions-bar">
-    <div class="search-box" style="display: flex; align-items: center; gap: 15px;">
-      <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por nombre...">
-      
-      <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; user-select: none;">
-        <input type="checkbox" [(ngModel)]="soloStockBajo"> ⚠️ Ver Stock Bajo (≤ 5 u.)
-      </label>
-    </div>
-
-    <button class="btn btn-success" (click)="mostrarFormulario = true">
-      + Agregar Nueva Prótesis
+<!-- Barra Superior / Header -->
+<div class="header-bar">
+  <div class="header-left">
+    <span class="brand-title">Sistema de Prótesis</span>
+    <span class="user-email" *ngIf="authService.user$ | async as user">
+      Hola, {{ user.email }}
+    </span>
+    <span class="dni-badge">
+      DNI: {{ dniUsuario | dniFormato }}
+    </span>
+  </div>
+  <div class="header-actions">
+    <a class="btn-chat" routerLink="/chat">Foro</a>
+    <a class="btn-chat" routerLink="/admin">Administración</a>
+    <button class="btn-logout" (click)="authService.logout()">
+      Cerrar Sesión
     </button>
   </div>
+</div>
 
-  @if (!mostrarFormulario) {
-    
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Stock</th>
-          <th>Vencimiento</th>
-          <th>Obra Social</th>
-          <th>Acciones de Gestión</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of filteredProtesis; track item.id) {
-          <tr>
-            <td>{{ item.nombreProducto }}</td>
-            <td>{{ item.cantidad }} u.</td>
-            <td [class.text-danger]="item.cantidad <= 5">{{ item.vencimiento }}</td>
-            <td>{{ item.obraSocial }}</td>
-            <td>
-              <button (click)="prepararEdicion(item)" class="btn btn-primary">Editar</button>
-              <button (click)="borrarItem(item.id)" class="btn btn-danger">Borrar</button>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="5" style="text-align: center; color: gray;">
-              No se encontraron prótesis con los filtros aplicados.
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-
-  } @else {
-    
-    <div class="form-container">
-      <h3>{{ idEnEdicion ? 'Editar Prótesis' : 'Cargar Nueva Prótesis' }}</h3>
-      
-      <form [formGroup]="stockForm" (ngSubmit)="guardarCambios()">
-        <div class="form-group">
-          <label>Nombre del Producto:</label>
-          <input type="text" formControlName="nombreProducto" placeholder="Ej: Prótesis de rodilla">
-        </div>
-
-        <div class="form-group">
-          <label>Cantidad en Stock:</label>
-          <input type="number" formControlName="cantidad" placeholder="Ej: 10">
-        </div>
-
-        <div class="form-group">
-          <label>Fecha de Vencimiento:</label>
-          <input type="date" formControlName="fechaVencimiento">
-        </div>
-
-        <div class="form-group">
-          <label>Obra Social Destinada:</label>
-          <input type="text" formControlName="obraSocial" placeholder="Ej: PAMI, IOMA, OSDE">
-        </div>
-        
-        <div class="form-actions">
-          <button type="submit" class="btn btn-success" [disabled]="stockForm.invalid">Guardar</button>
-          <button type="button" class="btn btn-secondary" (click)="cerrarFormulario()">Cancelar</button>
-        </div>
-      </form>
+<div class="main-container">
+  <!-- Filtros y Botón de Acción -->
+  <div class="toolbar">
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre..." 
+        [(ngModel)]="searchTerm" 
+      />
     </div>
+    <div class="filter-box">
+      <label>
+        <input type="checkbox" [(ngModel)]="soloStockBajo" />
+        ⚠️ Ver Stock Bajo (&le; 5 u.)
+      </label>
+    </div>
+    <div class="action-box">
+      <button class="btn-add" (click)="mostrarFormulario = true">
+        + Agregar Nueva Prótesis
+      </button>
+    </div>
+  </div>
 
-  }
+  <!-- Modal / Formulario -->
+  <div *ngIf="mostrarFormulario" class="modal-card">
+    <h3>{{ idEnEdicion ? 'Editar Prótesis' : 'Agregar Nueva Prótesis' }}</h3>
+    <form [formGroup]="stockForm" (ngSubmit)="guardarCambios()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre del Producto</label>
+          <input type="text" formControlName="nombreProducto" />
+        </div>
+        <div class="form-group">
+          <label>Cantidad (Stock)</label>
+          <input type="number" formControlName="cantidad" />
+        </div>
+        <div class="form-group">
+          <label>Fecha de Vencimiento</label>
+          <input type="date" formControlName="fechaVencimiento" />
+        </div>
+        <div class="form-group">
+          <label>Obra Social</label>
+          <input type="text" formControlName="obraSocial" />
+        </div>
+        <div class="form-group full-width">
+          <label>Orden Médica (Adjunto)</label>
+          <input type="file" (change)="onFileSelected($event)" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-save" [disabled]="cargandoImagen">
+          {{ cargandoImagen ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <button type="button" class="btn-cancel" (click)="cerrarFormulario()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
 
+  <!-- Tabla de Datos (Lee directamente el arreglo 'protesis') -->
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Stock</th>
+        <th>Vencimiento</th>
+        <th>Obra Social</th>
+        <th>Orden Médica</th>
+        <th>Acciones de Gestión</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of protesisFiltradas">
+        <td>{{ item.tipoProtesis || item.nombreProducto || 'Prótesis' }}</td>
+        <td>{{ cantidadDe(item) }}</td>
+        <td [class.expired-date]="vencimientoSuperaCincoAnios(fechaDeVencimiento(item))">
+          {{ fechaDeVencimiento(item) || 'N/A' }}
+        </td>
+        <td>{{ item.obraSocial || 'N/A' }}</td>
+        <td>
+          <button *ngIf="esImagenData(item.ordenMedicaUrl); else enlaceOrden" type="button" class="btn-order" (click)="verOrden(item.ordenMedicaUrl)">
+            📋 Ver Orden
+          </button>
+          <ng-template #enlaceOrden>
+            <a *ngIf="item.ordenMedicaUrl" [href]="item.ordenMedicaUrl" target="_blank" rel="noopener noreferrer" class="btn-order">
+              📋 Ver Orden
+            </a>
+          </ng-template>
+          <span *ngIf="!item.ordenMedicaUrl" class="no-order">Sin adjunto</span>
+        </td>
+        <td>
+          <button class="btn-edit" (click)="prepararEdicion(item)">Editar</button>
+          <button class="btn-delete" (click)="borrarItem(item.id!)">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="protesisFiltradas.length === 0">
+        <td colspan="6" class="empty-msg">
+          No se encontraron prótesis registradas.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="ordenEnVista" class="image-preview-backdrop" (click)="ordenEnVista = null">
+    <section class="image-preview" role="dialog" aria-modal="true" aria-label="Vista previa de orden médica" (click)="$event.stopPropagation()">
+      <button type="button" class="image-preview-close" (click)="ordenEnVista = null">Cerrar</button>
+      <img [src]="ordenEnVista" alt="Orden médica adjunta" />
+    </section>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Gráfico de Stock -->
+  <div class="chart-section">
+    
+    <app-stock-chart></app-stock-chart>
+  </div>
 </div>
